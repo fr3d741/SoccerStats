@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += webkitwidgets network core gui
+QT       += webkitwidgets network core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     loaderthread.cpp \
     htmlparser.cpp \
-    tablestruct.cpp
+    tablestruct.cpp \
+    xhtmlparser.cpp
 
 HEADERS  += mainwindow.h \
     loaderthread.h \
     htmlparser.h \
-    tablestruct.h
+    tablestruct.h \
+    xhtmlparser.h
 
 FORMS    += mainwindow.ui

@@ -13,7 +13,7 @@ LoaderThread::LoaderThread(QString url)
 	,_stop(false)
 	,_loaded(false)
 	,_url(url)
-	,_local_file(QString(" %1.t_html").arg(++_id))
+    ,_local_file(QString("%1.t_html").arg(++_id))
 {
 //	connect(_view, SIGNAL(loadFinished(bool)), SLOT(slotLoaded(bool)));
 //	connect(_view, SIGNAL(loadProgress(int)), SLOT(slotProgress(int)));
@@ -39,17 +39,17 @@ void LoaderThread::run()
 	QString dir = QDir::currentPath();
 	proc.setWorkingDirectory(dir);
 	proc.setProcessChannelMode(QProcess::MergedChannels);
-	proc.start("c:\\Perl64\\bin\\perl.exe ", parameters);
+    proc.start("perl.exe ", parameters);
     bool result = proc.waitForFinished(-1);
 
     qDebug() << proc.readAllStandardOutput();
 
-    while(1)
-    {
-        QFile f(_local_file);
-        if (f.exists())
-            break;
-    }
+//    while(1)
+//    {
+//        QFile f(_local_file);
+//        if (f.exists())
+//            break;
+//    }
 
     qDebug() << dir;
 

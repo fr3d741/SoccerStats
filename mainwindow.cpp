@@ -6,6 +6,7 @@
 #include "htmlparser.h"
 #include "loaderthread.h"
 #include "tablestruct.h"
+#include "xhtmlparser.h"
 
 #include "ui_mainwindow.h"
 
@@ -49,28 +50,8 @@ void MainWindow::GatherTeams()
     pool->start(thread);
     pool->waitForDone();
 
-    QString curent = QDir::currentPath();
-    QDir d(curent);
-    QStringList list = d.entryList();
-
-    QFile file(thread->localFile());
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    qDebug() << file.errorString();
-        QXmlStreamReader reader(&file);
-    while(!reader.atEnd())
-    {
-        if (reader.isStartElement())
-        {
-            reader.readNext();
-            if (reader.name() == "table")
-            {
-                TableStruct ts(reader);
-                QList<Row> r = ts.rows;
-            }
-        }
-        else
-            reader.readNext();
-    }
+    XHtmlParser parser(thread->localFile());
+    parser.Parse();
 
     delete pool;
 }
