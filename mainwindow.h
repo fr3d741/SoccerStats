@@ -5,6 +5,7 @@ class QWebView;
 
 #include <QMainWindow>
 #include <QWebElement>
+#include <QRunnable>
 
 #include "htmlparser.h"
 
@@ -22,13 +23,17 @@ public:
 
 private:
 	void GatherTeams();
+    QString readFile(QString path) const;
 
 public slots:
 	void slotLoadFinished(bool);
 private slots:
 	void on_actionRefresh_triggered();
 
+    void on_actionFile_triggered();
+
 private:
+    QList<QRunnable*> _finishedThreads;
 	HtmlParser _parser;
 	QWebView* view;
 	Ui::MainWindow *ui;

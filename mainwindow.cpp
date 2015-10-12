@@ -43,17 +43,52 @@ MainWindow::~MainWindow()
 
 void MainWindow::GatherTeams()
 {
-    QString url("http://www.soccerstats.com/leagues.asp");
+    QString baseUrl("http://www.soccerstats.com/");
+    QString url(baseUrl + "leagues.asp");
     LoaderThread* thread = new LoaderThread(url);
     QThreadPool* pool = new QThreadPool();
+    //pool->setMaxThreadCount(1);
     thread->setAutoDelete(false);
     pool->start(thread);
     pool->waitForDone();
 
-    XHtmlParser parser(thread->localFile());
-    parser.Parse();
+    QString html = readFile(thread->localFile());
+    HtmlParser parser;
+    delete thread;
+
+    QStringList links = parser.extractLeagueLinks(html);
+
+    while(!links.isEmpty())
+    {
+        QString link = links.takeFirst();
+        LoaderThread* task = new LoaderThread(QString("%1%2").arg(baseUrl).arg(link));
+        task->setAutoDelete(false);
+        _finishedThreads.push_back(task);
+        pool->start(task);
+    }
+    pool->waitForDone();
+
+    while(!_finishedThreads.isEmpty())
+    {
+        LoaderThread* th = dynamic_cast<LoaderThread*>(_finishedThreads.takeFirst());
+        parser.extractTeamLinks(readFile(th->localFile()));
+        delete th;
+    }
+
+    ui->listWidget->addItems(parser.getTeams().keys());
 
     delete pool;
+}
+
+QString MainWindow::readFile(QString path) const
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if (!file.isOpen() || !file.isReadable())
+        return QString("");
+
+    QTextStream stream(&file);
+    return stream.readAll();
 }
 
 void MainWindow::slotLoadFinished(bool)
@@ -76,4 +111,17 @@ void MainWindow::slotLoadFinished(bool)
 void MainWindow::on_actionRefresh_triggered()
 {
     GatherTeams();
+}
+
+void MainWindow::on_actionFile_triggered()
+{
+    HtmlParser parser;
+    QString file("1.t_html");
+    QString content = readFile(file);
+
+    parser.extractTeamLinks(content);
+    parser.ExtractInnerTables(content);
+
+    ui->listWidget->addItems(parser.getTeams().keys());
+
 }

@@ -59,32 +59,32 @@ void XHtmlParser::BuildDOM(Node* node, QString content)
 tryAgain:
     while(1)
     {
-        Tag t = GetNextTag(content, result);
-        if (t.state == State::Invalid)
-            break;
+//        Tag t = GetNextTag(content, result);
+//        if (t.state == State::Invalid)
+//            break;
 
-        if (t.state == State::Broken)
-        {
-            qDebug() << "Broken state: " << content;
-            ++result;
-            continue;
-        }
+//        if (t.state == State::Broken)
+//        {
+//            qDebug() << "Broken state: " << content;
+//            ++result;
+//            continue;
+//        }
 
-        if (!_tags.contains(t.tag))
-        {
-            qDebug() << "Unknown tag: " << t.tag;
-            continue;
-        }
-        Node* n = new Node;
-        n->name = t.tag;
-        n->junk = content.mid(t.startTagIdx, t.innerStart - t.startTagIdx);
-        node->children.append(n);
-        if (t.innerStart != t.innerEnd)
-        {
-            QString innerC = content.mid(t.innerStart, t.innerEnd - t.innerStart);
-            BuildDOM(n, innerC);
-        }
-        result = t.endTagIdx;
+//        if (!_tags.contains(t.tag))
+//        {
+//            qDebug() << "Unknown tag: " << t.tag;
+//            continue;
+//        }
+//        Node* n = new Node;
+//        n->name = t.tag;
+//        n->junk = content.mid(t.startTagIdx, t.innerStart - t.startTagIdx);
+//        node->children.append(n);
+//        if (t.innerStart != t.innerEnd)
+//        {
+//            QString innerC = content.mid(t.innerStart, t.innerEnd - t.innerStart);
+//            BuildDOM(n, innerC);
+//        }
+//        result = t.endTagIdx;
     }
 }
 
@@ -114,9 +114,9 @@ Tag XHtmlParser::GetNextTag(QString content, int from) const
     resultTag.startTagIdx = start;
     resultTag.tag = tag;
     resultTag.innerStart = end + 1;
-    if (start == -1)resultTag.state = State::Invalid;
-    else if (endTag == -1 && closeTag == -1) resultTag.state = State::Broken;
-    else resultTag.state = State::Valid;
+//    if (start == -1)resultTag.state = State::Invalid;
+//    else if (endTag == -1 && closeTag == -1) resultTag.state = State::Broken;
+//    else resultTag.state = State::Valid;
 
 return resultTag;
 }

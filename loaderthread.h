@@ -14,7 +14,7 @@ public:
 
 	QString localFile();
 
-	void run();
+    virtual void run();
 signals:
 
 public slots:
