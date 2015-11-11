@@ -38,7 +38,7 @@ public:
 
     QStringList extractValuesOf(QString key, QString in);
 
-    void ExtractInnerTables(QString html);
+    QList<QVector<QStringList> > ExtractInnerTables(QString html);
 
     bool parseXML(QString file);
 
@@ -49,6 +49,8 @@ public:
     QMap<QString, QMap<QString, QString> >& getTeams();
 
 private:
+    QString getNextToken(QString html, int fromIndex);
+    std::pair<QString, QString> recursiveTableExtract(QString html);
     void parseTeamRow(Team& t, QString row);
     std::pair<QString, int> getTag(QString tag, int from, QString in);
 

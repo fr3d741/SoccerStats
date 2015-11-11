@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QDir>
 #include <QXmlStreamReader>
+#include <QTreeWidgetItem>
 #include "mainwindow.h"
 #include "htmlparser.h"
 #include "loaderthread.h"
@@ -53,7 +54,7 @@ void MainWindow::GatherTeams()
     pool->waitForDone();
 
     QString html = readFile(thread->localFile());
-    HtmlParser parser;
+    HtmlParser& parser = _parser;
     delete thread;
 
     QStringList links = parser.extractLeagueLinks(html);
@@ -78,6 +79,11 @@ void MainWindow::GatherTeams()
     ui->listWidget->addItems(parser.getTeams().keys());
 
     delete pool;
+}
+
+void MainWindow::ParseTeamStats()
+{
+
 }
 
 QString MainWindow::readFile(QString path) const
@@ -116,12 +122,34 @@ void MainWindow::on_actionRefresh_triggered()
 void MainWindow::on_actionFile_triggered()
 {
     HtmlParser parser;
-    QString file("1.t_html");
+    QString file("12.t_html");
     QString content = readFile(file);
 
     parser.extractTeamLinks(content);
-    parser.ExtractInnerTables(content);
+    QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
+    AddTeamToTreeWidget(file, tables);
 
     ui->listWidget->addItems(parser.getTeams().keys());
 
+}
+
+void MainWindow::AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > &table)
+{
+    QTreeWidgetItem* root = new QTreeWidgetItem();
+    root->setText(0, name);
+    for( QList<QVector<QStringList> >::iterator it = table.begin(); it != table.end(); ++it )
+    {
+        QTreeWidgetItem* item = new QTreeWidgetItem(root);
+        AddChildren(*it, item);
+    }
+
+    ui->treeWidget->addTopLevelItem(root);
+}
+
+void MainWindow::AddChildren(QVector<QStringList>& vector, QTreeWidgetItem* root)
+{
+    for(QVector<QStringList>::iterator it = vector.begin(); it != vector.end(); ++it)
+    {
+        QTreeWidgetItem* item = new QTreeWidgetItem(root, *it);
+    }
 }

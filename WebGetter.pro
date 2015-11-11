@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     htmlparser.cpp \
     tablestruct.cpp \
     xhtmlparser.cpp \
-    teamextractor.cpp
+    teamextractor.cpp \
+    automatictablebuilder.cpp
 
 HEADERS  += mainwindow.h \
     loaderthread.h \
     htmlparser.h \
     tablestruct.h \
     xhtmlparser.h \
-    teamextractor.h
+    teamextractor.h \
+    automatictablebuilder.h
 
 FORMS    += mainwindow.ui

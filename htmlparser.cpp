@@ -12,6 +12,23 @@ QMap<QString, QMap<QString, QString> > &HtmlParser::getTeams()
     return teams;
 }
 
+QString HtmlParser::getNextToken(QString html, int fromIndex)
+{
+    QString stack;
+    //int startIndex =
+    for(int i = fromIndex; i < html.length(); ++i)
+    {
+        stack.append(html[i]);
+    }
+
+    return "";
+}
+
+std::pair<QString, QString> HtmlParser::recursiveTableExtract(QString html)
+{
+return std::pair<QString, QString>();
+}
+
 HtmlParser::HtmlParser()
 {
 
@@ -80,6 +97,7 @@ bool HtmlParser::parseTable(QString node, QString tableKey)
     int endtagIdx = node.indexOf(rexp, tableIdx);
     QString tableTag = node.mid(tableIdx, endtagIdx - tableIdx);
     qDebug() << tableTag;
+    return false;
 }
 
 QStringList HtmlParser::extractLeagueLinks(QString html)
@@ -172,11 +190,12 @@ QStringList HtmlParser::extractValuesOf(QString key, QString in)
     return resultList;
 }
 
-void HtmlParser::ExtractInnerTables(QString html)
+QList<QVector<QStringList>> HtmlParser::ExtractInnerTables(QString html)
 {
     QStringList tables;
     QString openTag("<table");
     QString closeTag("</table");
+    QList<QVector<QStringList>> toret;
     int lastIndex = 0;
     while(1)
     {
@@ -189,14 +208,18 @@ void HtmlParser::ExtractInnerTables(QString html)
             continue;
 
         QVector<QStringList> table = parseRows(pair.first);
-        foreach (QStringList var, table) {
-            foreach (QString var2, var) {
-                std::cout << var2.toStdString();
-            }
-            std::cout << std::endl;
-        }
+        toret.append(table);
+//        foreach (QStringList var, table) {
+//            foreach (QString var2, var) {
+//                std::cout << var2.toStdString();
+//            }
+//            std::cout << std::endl;
+//        }
     }
+    return toret;
 }
+
+
 
 QVector<QStringList> HtmlParser::parseRows(QString content)
 {

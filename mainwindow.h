@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 class QWebView;
+class QTreeWidgetItem;
 
 #include <QMainWindow>
 #include <QWebElement>
@@ -23,6 +24,8 @@ public:
 
 private:
 	void GatherTeams();
+    void ParseTeamStats();
+    void AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > &table);
     QString readFile(QString path) const;
 
 public slots:
@@ -36,7 +39,9 @@ private:
     QList<QRunnable*> _finishedThreads;
 	HtmlParser _parser;
 	QWebView* view;
-	Ui::MainWindow *ui;
+    Ui::MainWindow *ui;
+    void AddChildren(QVector<QStringList> &vector, QTreeWidgetItem *root);
+    void AddChildren(QStringList &vector, QTreeWidgetItem *root);
 };
 
 #endif // MAINWINDOW_H
