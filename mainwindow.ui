@@ -49,6 +49,7 @@
      <string>Test</string>
     </property>
     <addaction name="actionFile"/>
+    <addaction name="actionTables"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTest"/>
@@ -70,6 +71,11 @@
   <action name="actionFile">
    <property name="text">
     <string>File</string>
+   </property>
+  </action>
+  <action name="actionTables">
+   <property name="text">
+    <string>Tables</string>
    </property>
   </action>
  </widget>

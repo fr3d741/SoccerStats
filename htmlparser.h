@@ -42,17 +42,32 @@ public:
 
     bool parseXML(QString file);
 
-	static QString stripTags(QString str);
-
 	QMap< QString, Table >& tables();
 
     QMap<QString, QMap<QString, QString> >& getTeams();
 
+public:
+    static QString stripTags(QString str);
+
+    static QString RemoveTagContent(QString html, QString tag);
+
+    static QStringList stripHtmlTags(QStringList stringList);
+
+    static QString stripHtmlTags(QString txt);
 private:
     QString getNextToken(QString html, int fromIndex);
     std::pair<QString, QString> recursiveTableExtract(QString html);
     void parseTeamRow(Team& t, QString row);
-    std::pair<QString, int> getTag(QString tag, int from, QString in);
+
+    /*
+     * \brief returns <content, endTagIndex> pair
+    */
+    static std::pair<QString, int> getTag(QString tag, int from, QString in);
+
+    /*
+     * \brief returns <startIndex, endIndex> pair of tag
+    */
+    static std::pair<int, int> getTagIndices(QString tag, int from, QString in);
 
 private:
     QMap< QString, Table > _tables;

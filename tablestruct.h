@@ -2,25 +2,19 @@
 #define TABLESTRUCT_H
 
 #include <QList>
-#include <QXmlStreamReader>
-
-struct Cell{
-    QString value;
-};
+#include <QString>
 
 struct Row{
-    QList<Cell> cells;
+    QList<QString> cells;
 };
 
 class TableStruct
 {
 public:
-    TableStruct(QXmlStreamReader& reader);
+    TableStruct();
 
     QList<Row> rows;
 private:
-    void ExtractRow(QXmlStreamReader& reader);
-    void ExtractCell(QXmlStreamReader& reader);
 };
 
 #endif // TABLESTRUCT_H

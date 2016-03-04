@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     tablestruct.cpp \
     xhtmlparser.cpp \
     teamextractor.cpp \
-    automatictablebuilder.cpp
+	automatictablebuilder.cpp \
+	datamanager.cpp
 
 HEADERS  += mainwindow.h \
     loaderthread.h \
@@ -27,6 +28,7 @@ HEADERS  += mainwindow.h \
     tablestruct.h \
     xhtmlparser.h \
     teamextractor.h \
-    automatictablebuilder.h
+	automatictablebuilder.h \
+	datamanager.h
 
 FORMS    += mainwindow.ui

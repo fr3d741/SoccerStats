@@ -1,18 +1,5 @@
 #include "tablestruct.h"
 
-TableStruct::TableStruct(QXmlStreamReader &reader)
+TableStruct::TableStruct()
 {
-    while(!reader.atEnd())
-    {
-        if (reader.isEndElement())
-        {
-            reader.readNext();
-            if (reader.name() == "table")
-            {
-                break;
-            }
-        }
-        else
-            reader.readNext();
-    }
 }

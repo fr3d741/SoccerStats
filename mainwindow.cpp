@@ -6,8 +6,9 @@
 #include "mainwindow.h"
 #include "htmlparser.h"
 #include "loaderthread.h"
+//#include "xhtmlparser.h"
+#include "datamanager.h"
 #include "tablestruct.h"
-#include "xhtmlparser.h"
 
 #include "ui_mainwindow.h"
 
@@ -97,6 +98,19 @@ QString MainWindow::readFile(QString path) const
     return stream.readAll();
 }
 
+int MainWindow::calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table)
+{
+    int max = 0;
+    foreach(auto var, table)
+    {
+        foreach(auto var2, var)
+        {
+            max = std::max(var2.size(), max);
+        }
+    }
+    return max;
+}
+
 void MainWindow::slotLoadFinished(bool)
 {
 	//qDebug() << "Loaded **** ";
@@ -128,7 +142,6 @@ void MainWindow::on_actionFile_triggered()
     parser.extractTeamLinks(content);
     QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
     AddTeamToTreeWidget(file, tables);
-
     ui->listWidget->addItems(parser.getTeams().keys());
 
 }
@@ -146,10 +159,37 @@ void MainWindow::AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > 
     ui->treeWidget->addTopLevelItem(root);
 }
 
+void MainWindow::AddTableToTreeItem(QTreeWidgetItem *root, TableStruct *table)
+{
+    foreach (auto var, table->rows) {
+        QTreeWidgetItem* item = new QTreeWidgetItem(root, var.cells);
+    }
+}
+
 void MainWindow::AddChildren(QVector<QStringList>& vector, QTreeWidgetItem* root)
 {
     for(QVector<QStringList>::iterator it = vector.begin(); it != vector.end(); ++it)
     {
-        QTreeWidgetItem* item = new QTreeWidgetItem(root, *it);
+        QTreeWidgetItem* item = new QTreeWidgetItem(root, HtmlParser::stripHtmlTags(*it));
     }
+}
+
+void MainWindow::on_actionTables_triggered()
+{
+    HtmlParser parser;
+    QString file("test.htm");
+    QString content = readFile(file);
+    DataManager* manager = new DataManager();
+
+    //manager.ParseHtml(content);
+    //ui->treeWidget->setColumnCount(manager.GetMaxColumnNumber());
+
+    QTreeWidgetItem* root = new QTreeWidgetItem();
+    root->setText(0, file);
+
+//    foreach (auto var, manager.GetTables()) {
+//        AddTableToTreeItem(root, var);
+//    }
+
+    ui->treeWidget->addTopLevelItem(root);
 }
