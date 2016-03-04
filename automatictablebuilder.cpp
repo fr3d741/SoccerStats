@@ -17,7 +17,7 @@ void AutomaticTableBuilder::Process(QString str)
     QString stack;
     for(int i = 0; i < str.length(); ++i)
     {
-        Push(str.at(i));
+        Push(str.at(i).toLatin1());
         if (Is("<t"))
         {
 

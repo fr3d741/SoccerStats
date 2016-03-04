@@ -179,17 +179,18 @@ void MainWindow::on_actionTables_triggered()
     HtmlParser parser;
     QString file("test.htm");
     QString content = readFile(file);
-    DataManager* manager = new DataManager();
+    DataManager manager;
 
-    //manager.ParseHtml(content);
-    //ui->treeWidget->setColumnCount(manager.GetMaxColumnNumber());
+    manager.ParseHtml(content);
+    ui->treeWidget->setColumnCount(manager.GetMaxColumnNumber());
 
     QTreeWidgetItem* root = new QTreeWidgetItem();
     root->setText(0, file);
 
-//    foreach (auto var, manager.GetTables()) {
-//        AddTableToTreeItem(root, var);
-//    }
+    foreach (auto var, manager.GetTables()) {
+        QTreeWidgetItem* row = new QTreeWidgetItem(root);
+        AddTableToTreeItem(row, var);
+    }
 
     ui->treeWidget->addTopLevelItem(root);
 }

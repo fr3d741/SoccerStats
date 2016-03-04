@@ -33,6 +33,7 @@ void DataManager::buildTables(QList<QVector<QStringList> > &tables)
         QVector<QStringList> rows = tables.takeFirst();
         TableStruct* tablePtr = new TableStruct;
         buildRows(tablePtr, rows);
+        _tables.push_back(tablePtr);
     }
 }
 
@@ -45,7 +46,8 @@ void DataManager::buildRows(TableStruct* table, QVector<QStringList> &rows)
             r.cells.push_back(HtmlParser::stripHtmlTags(column));
         }
 
-        //if (r.cells.first().contains())
+        if (r.cells.first().contains("adsbygoogle"))
+            continue;
         _maxColumnNumber = std::max(_maxColumnNumber, r.cells.size());
         table->rows.push_back(r);
     }
