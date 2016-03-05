@@ -16,6 +16,12 @@
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
     ui(new Ui::MainWindow),
+    _finishedThreads(),
+    _loadedTeams(),
+    _baseUrl("http://www.soccerstats.com/"),
+    _pool(),
+    _parser(),
+    view(),
     _manager(new DataManager()),
     _filters(new FilterFacade(_manager))
 {
@@ -58,77 +64,31 @@ MainWindow::~MainWindow()
 
 void MainWindow::GatherTeams()
 {
-    QString baseUrl("http://www.soccerstats.com/");
-    QString url(baseUrl + "leagues.asp");
-    LoaderThread* thread = new LoaderThread(url);
-    QThreadPool* pool = new QThreadPool();
-    //pool->setMaxThreadCount(1);
+    QString url(_baseUrl + "leagues.asp");
+    LoaderThread* thread = new LoaderThread(url, LoaderThread::StartPage);
+    _pool = new QThreadPool();
+    _pool->setMaxThreadCount( QThreadPool::globalInstance()->maxThreadCount() - 1 );
     thread->setAutoDelete(false);
-    pool->start(thread);
-    pool->waitForDone();
+    _pool->start(thread);
+    _pool->waitForDone();
 
     QString html = readFile(thread->localFile());
-    HtmlParser& parser = _parser;
     delete thread;
 
-    QStringList links = parser.extractLeagueLinks(html);
-    ui->progressBar->setValue(0);
+    QStringList links = _parser.extractLeagueLinks(html);
     ui->progressBar->setMaximum(links.size());
+    ui->progressBar->setTextVisible(true);
+    ui->progressBar->setAlignment(Qt::AlignHCenter);
+    ui->progressBar->setValue(0);
     while(!links.isEmpty())
     {
         QString link = links.takeFirst();
-        LoaderThread* task = new LoaderThread(QString("%1%2").arg(baseUrl).arg(link));
-        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()));
+        LoaderThread* task = new LoaderThread(QString("%1%2").arg(_baseUrl).arg(link), LoaderThread::Leagues);
+        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()), Qt::QueuedConnection);
         task->setAutoDelete(false);
         _finishedThreads.push_back(task);
-        pool->start(task);
+        _pool->start(task);
     }
-    pool->waitForDone();
-
-    while(!_finishedThreads.isEmpty())
-    {
-        LoaderThread* th = dynamic_cast<LoaderThread*>(_finishedThreads.takeFirst());
-        parser.extractTeamLinks(readFile(th->localFile()));
-        QFile file(th->localFile());
-        file.remove();
-        delete th;
-    }
-
-    QMap<QString, QRunnable*> loadedTeams;
-    HtmlParser::TeamsContainer& teamLinks = parser.getTeams();
-    ui->progressBar->setValue(0);
-    ui->progressBar->setMaximum(teamLinks.size());
-    for(HtmlParser::TeamsContainer::iterator it = teamLinks.begin(); it != teamLinks.end(); ++it)
-    {
-        QString link = it.value()["link"];
-        LoaderThread* task = new LoaderThread(QString("%1%2").arg(baseUrl).arg(link));
-        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()));
-        loadedTeams[it.key()] = task;
-        task->setAutoDelete(false);
-        pool->start(task);
-    }
-
-    pool->waitForDone();
-
-    for(QMap<QString, QRunnable*>::iterator it = loadedTeams.begin(); it != loadedTeams.end(); ++it)
-    {
-        LoaderThread* task = dynamic_cast<LoaderThread*>(it.value());
-        QString content = readFile(task->localFile());
-        _manager->ParseHtml(it.key(), content);
-        QFile file(task->localFile());
-        file.remove();
-    }
-
-    ui->treeWidget->setColumnCount(_manager->GetMaxColumnNumber());
-    QList<QString> teams = _manager->GetTables().keys();
-    ui->listWidget->addItems(teams);
-    while(!teams.isEmpty())
-    {
-        QString team = teams.takeFirst();
-        AddRootItemForTeam(team);
-    }
-
-    delete pool;
 }
 
 void MainWindow::ParseTeamStats()
@@ -162,8 +122,75 @@ int MainWindow::calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table)
 
 void MainWindow::slotLoadFinished()
 {
-    int value = ui->progressBar->value();
-    ui->progressBar->setValue(value + 1);
+    int value = ui->progressBar->value() + 1;
+    int maxValue = ui->progressBar->maximum();
+    ui->progressBar->setValue(value);
+    ui->progressBar->update();
+    //QApplication::processEvents();
+    LoaderThread* sndr = dynamic_cast<LoaderThread*>(sender());
+    switch(sndr->category)
+    {
+        case LoaderThread::StartPage:
+            break;
+        case LoaderThread::Leagues:
+            {
+                ui->progressBar->setFormat(QString("Downloading leagues...%1/%2").arg(value).arg(maxValue));
+                _parser.extractTeamLinks(readFile(sndr->localFile()));
+                QFile file(sndr->localFile());
+                file.remove();
+                file.setFileName("");
+                if (!_pool->activeThreadCount())
+                    LoadTeams();
+            }
+            break;
+        case LoaderThread::Teams:
+            {
+                ui->progressBar->setFormat(QString("Downloading teams...%1/%2").arg(value).arg(maxValue));
+                QString team = _loadedTeams[sndr];
+                QString content = readFile(sndr->localFile());
+                _manager->ParseHtml(team, content);
+                QFile file(sndr->localFile());
+                file.remove();
+                if (!_pool->activeThreadCount())
+                    LoadsFinished();
+            }
+            break;
+    }
+}
+
+void MainWindow::LoadsFinished()
+{
+    ui->treeWidget->setColumnCount(_manager->GetMaxColumnNumber());
+    QList<QString> teams = _manager->GetTables().keys();
+    ui->listWidget->addItems(teams);
+    int value = 0;
+    int maxValue = teams.size();
+
+    ui->progressBar->setMaximum(maxValue);
+    while(!teams.isEmpty())
+    {
+        ui->progressBar->setValue(value);
+        ui->progressBar->setFormat(QString("Filling tree...%1/2%").arg(value*100).arg(maxValue));
+        QString team = teams.takeFirst();
+        AddRootItemForTeam(team);
+        value++;
+    }
+}
+
+void MainWindow::LoadTeams()
+{
+    HtmlParser::TeamsContainer& teamLinks = _parser.getTeams();
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(teamLinks.size());
+    for(HtmlParser::TeamsContainer::iterator it = teamLinks.begin(); it != teamLinks.end(); ++it)
+    {
+        QString link = it.value()["link"];
+        LoaderThread* task = new LoaderThread(QString("%1%2").arg(_baseUrl).arg(link), LoaderThread::Teams);
+        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()), Qt::QueuedConnection);
+        _loadedTeams[task] = it.key();
+        task->setAutoDelete(false);
+        _pool->start(task);
+    }
 }
 
 void MainWindow::on_actionRefresh_triggered()

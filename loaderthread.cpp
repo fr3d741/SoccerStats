@@ -7,7 +7,7 @@
 
 int LoaderThread::_id = 0;
 
-LoaderThread::LoaderThread(QString url)
+LoaderThread::LoaderThread(QString url, Category type)
 	:QObject(0)
 	,QRunnable()
 	,_stop(false)
@@ -15,6 +15,7 @@ LoaderThread::LoaderThread(QString url)
 	,_url(url)
     ,_local_file(QString("%1.t_html").arg(++_id))
 {
+    category = type;
 //	connect(_view, SIGNAL(loadFinished(bool)), SLOT(slotLoaded(bool)));
 //	connect(_view, SIGNAL(loadProgress(int)), SLOT(slotProgress(int)));
 	qDebug() << "start";

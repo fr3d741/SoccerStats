@@ -9,7 +9,15 @@ class LoaderThread : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
-	LoaderThread(QString url);
+    enum Category{
+        StartPage,
+        Leagues,
+        Teams
+    };
+
+    Category category;
+
+    LoaderThread(QString url, Category type);
 	virtual ~LoaderThread();
 
 	QString localFile();

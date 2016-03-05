@@ -10,6 +10,7 @@ class FilterFacade;
 #include <QMainWindow>
 #include <QWebElement>
 #include <QRunnable>
+#include <QThreadPool>
 
 #include "htmlparser.h"
 
@@ -20,10 +21,14 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
+    Ui::MainWindow *ui;
     QList<QRunnable*> _finishedThreads;
+    QMap<QRunnable*, QString> _loadedTeams;
+    QString _baseUrl;
+    QThreadPool* _pool;
     HtmlParser _parser;
     QWebView* view;
-    Ui::MainWindow *ui;
+
     DataManager* _manager;
     FilterFacade* _filters;
 
@@ -32,6 +37,8 @@ public:
 	~MainWindow();
 
     void AddRootItemForTeam(QString team);
+    void LoadTeams();
+    void LoadsFinished();
 private:
 	void GatherTeams();
     void ParseTeamStats();
