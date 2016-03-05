@@ -54,6 +54,7 @@ void LoaderThread::run()
     qDebug() << dir;
 
     qDebug() << "Thread done";
+    emit signalFinished();
 }
 
 

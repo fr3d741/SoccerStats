@@ -1,26 +1,30 @@
 #ifndef DATAMANAGER_H
 #define DATAMANAGER_H
 
+class TableStruct;
+
 #include <QString>
 #include <QList>
 #include <QVector>
-
-#include "tablestruct.h"
+#include <QMap>
 
 class DataManager
 {
-    QList<TableStruct*> _tables;
+    QMap<QString, QList<TableStruct*> > _tables;
     int                 _maxColumnNumber;
 public:
+    typedef QMap<QString, QList<TableStruct*> > TeamTablesContainer;
+
     DataManager();
 
-    void ParseHtml(QString content);
+    void ParseHtml(QString team, QString content);
 
     int GetMaxColumnNumber();
 
-    QList<TableStruct*>& GetTables();
+    const TeamTablesContainer& GetTables();
+    QList<TableStruct*>& GetTables(QString team);
 private:
-    void buildTables(QList<QVector<QStringList>>& tables);
+    void buildTables(QString team, QList<QVector<QStringList>>& tables);
     void buildRows(TableStruct* table, QVector<QStringList>& rows);
 };
 

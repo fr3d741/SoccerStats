@@ -16,6 +16,7 @@ public:
 
     virtual void run();
 signals:
+    void signalFinished();
 
 public slots:
 

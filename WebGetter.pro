@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     xhtmlparser.cpp \
     teamextractor.cpp \
 	automatictablebuilder.cpp \
-	datamanager.cpp
+	datamanager.cpp \
+    filterfacade.cpp \
+    visualizefilter.cpp
 
 HEADERS  += mainwindow.h \
     loaderthread.h \
@@ -29,6 +31,8 @@ HEADERS  += mainwindow.h \
     xhtmlparser.h \
     teamextractor.h \
 	automatictablebuilder.h \
-	datamanager.h
+	datamanager.h \
+    filterfacade.h \
+    visualizefilter.h
 
 FORMS    += mainwindow.ui

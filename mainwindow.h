@@ -4,6 +4,8 @@
 class QWebView;
 class QTreeWidgetItem;
 class TableStruct;
+class DataManager;
+class FilterFacade;
 
 #include <QMainWindow>
 #include <QWebElement>
@@ -18,11 +20,18 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
+    QList<QRunnable*> _finishedThreads;
+    HtmlParser _parser;
+    QWebView* view;
+    Ui::MainWindow *ui;
+    DataManager* _manager;
+    FilterFacade* _filters;
 
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+    void AddRootItemForTeam(QString team);
 private:
 	void GatherTeams();
     void ParseTeamStats();
@@ -32,7 +41,7 @@ private:
     int calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table);
 
 public slots:
-	void slotLoadFinished(bool);
+    void slotLoadFinished();
 private slots:
 	void on_actionRefresh_triggered();
 
@@ -40,11 +49,9 @@ private slots:
 
     void on_actionTables_triggered();
 
+    void on_ApplyFilter_pressed();
+
 private:
-    QList<QRunnable*> _finishedThreads;
-	HtmlParser _parser;
-	QWebView* view;
-    Ui::MainWindow *ui;
     void AddChildren(QVector<QStringList> &vector, QTreeWidgetItem *root);
     void AddChildren(QStringList &vector, QTreeWidgetItem *root);
 };

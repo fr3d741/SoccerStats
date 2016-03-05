@@ -7,7 +7,7 @@
 
 
 
-QMap<QString, QMap<QString, QString> > &HtmlParser::getTeams()
+HtmlParser::TeamsContainer &HtmlParser::getTeams()
 {
     return teams;
 }
@@ -165,7 +165,7 @@ void HtmlParser::extractTeamLinks(QString html)
                 continue;
             int idx = node.indexOf("=");
             QString href_val = node.mid(idx + 1);
-            href_val = href_val.remove("\"");
+            href_val = href_val.remove("\"").remove("\'");
             teams[val]["link"]=href_val;
         }
     }
@@ -218,8 +218,6 @@ QList<QVector<QStringList>> HtmlParser::ExtractInnerTables(QString html)
     }
     return toret;
 }
-
-
 
 QVector<QStringList> HtmlParser::parseRows(QString content)
 {
@@ -340,5 +338,19 @@ QString HtmlParser::stripHtmlTags(QString txt)
     QString result;
     result = HtmlParser::RemoveTagContent(txt, "span");
     result = HtmlParser::stripTags(result);
-    return result.replace("&nbsp;", " ").trimmed();
+    return RemoveDuplicates(result.replace("&nbsp;", " ").trimmed().replace("\n", " "), ' ');
+}
+
+QString HtmlParser::RemoveDuplicates(QString inText, QChar what)
+{
+    QString result;
+    QChar lastChar;
+    foreach (auto var, inText)
+    {
+        if (var == what && lastChar == what)
+            continue;
+        lastChar = var;
+        result.append(var);
+    }
+    return result;
 }

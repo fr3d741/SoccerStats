@@ -24,6 +24,8 @@ class HtmlParser
 {
     QMap<QString, QMap<QString, QString> > teams;
 public:
+    typedef QMap<QString, QMap<QString, QString> > TeamsContainer;
+
 	HtmlParser();
 
 	QMap<QString, QString> ExtractLinks(QWebElement node, QString key);
@@ -44,7 +46,7 @@ public:
 
 	QMap< QString, Table >& tables();
 
-    QMap<QString, QMap<QString, QString> >& getTeams();
+    TeamsContainer& getTeams();
 
 public:
     static QString stripTags(QString str);
@@ -54,6 +56,8 @@ public:
     static QStringList stripHtmlTags(QStringList stringList);
 
     static QString stripHtmlTags(QString txt);
+
+    static QString RemoveDuplicates(QString inText, QChar what);
 private:
     QString getNextToken(QString html, int fromIndex);
     std::pair<QString, QString> recursiveTableExtract(QString html);

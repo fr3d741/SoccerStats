@@ -6,17 +6,30 @@
 #include "mainwindow.h"
 #include "htmlparser.h"
 #include "loaderthread.h"
-//#include "xhtmlparser.h"
+#include "visualizefilter.h"
 #include "datamanager.h"
 #include "tablestruct.h"
+#include "filterfacade.h"
 
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _manager(new DataManager()),
+    _filters(new FilterFacade(_manager))
 {
 	ui->setupUi(this);
+
+    auto filters = _filters->GetFilters();
+    while(!filters.isEmpty())
+    {
+        auto filter = filters.takeFirst();
+        QListWidgetItem* item = new QListWidgetItem(filter.Name);
+        item->setData(Qt::UserRole, QVariant::fromValue(filter.Id));
+        ui->filtersListWidget->addItem(item);
+    }
+
 //	QUrl url("http://www.soccerstats.com/leagues.asp");
 //	ui->setupUi(this);
 //	view = new QWebView(this);
@@ -59,11 +72,13 @@ void MainWindow::GatherTeams()
     delete thread;
 
     QStringList links = parser.extractLeagueLinks(html);
-
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(links.size());
     while(!links.isEmpty())
     {
         QString link = links.takeFirst();
         LoaderThread* task = new LoaderThread(QString("%1%2").arg(baseUrl).arg(link));
+        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()));
         task->setAutoDelete(false);
         _finishedThreads.push_back(task);
         pool->start(task);
@@ -74,10 +89,44 @@ void MainWindow::GatherTeams()
     {
         LoaderThread* th = dynamic_cast<LoaderThread*>(_finishedThreads.takeFirst());
         parser.extractTeamLinks(readFile(th->localFile()));
+        QFile file(th->localFile());
+        file.remove();
         delete th;
     }
 
-    ui->listWidget->addItems(parser.getTeams().keys());
+    QMap<QString, QRunnable*> loadedTeams;
+    HtmlParser::TeamsContainer& teamLinks = parser.getTeams();
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(teamLinks.size());
+    for(HtmlParser::TeamsContainer::iterator it = teamLinks.begin(); it != teamLinks.end(); ++it)
+    {
+        QString link = it.value()["link"];
+        LoaderThread* task = new LoaderThread(QString("%1%2").arg(baseUrl).arg(link));
+        connect(task, SIGNAL(signalFinished()), SLOT(slotLoadFinished()));
+        loadedTeams[it.key()] = task;
+        task->setAutoDelete(false);
+        pool->start(task);
+    }
+
+    pool->waitForDone();
+
+    for(QMap<QString, QRunnable*>::iterator it = loadedTeams.begin(); it != loadedTeams.end(); ++it)
+    {
+        LoaderThread* task = dynamic_cast<LoaderThread*>(it.value());
+        QString content = readFile(task->localFile());
+        _manager->ParseHtml(it.key(), content);
+        QFile file(task->localFile());
+        file.remove();
+    }
+
+    ui->treeWidget->setColumnCount(_manager->GetMaxColumnNumber());
+    QList<QString> teams = _manager->GetTables().keys();
+    ui->listWidget->addItems(teams);
+    while(!teams.isEmpty())
+    {
+        QString team = teams.takeFirst();
+        AddRootItemForTeam(team);
+    }
 
     delete pool;
 }
@@ -111,21 +160,10 @@ int MainWindow::calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table)
     return max;
 }
 
-void MainWindow::slotLoadFinished(bool)
+void MainWindow::slotLoadFinished()
 {
-	//qDebug() << "Loaded **** ";
-//	QWebPage* page = view->page();
-//	QWebElementCollection collection = page->mainFrame()->findAllElements("table");
-
-//	foreach (QWebElement e, collection) {
-//		if (_parser.parseTable(e, "Leagues"))
-//			break;
-//	}
-
-
-//	Table t = _parser.tables()["Leagues"];
-//	LoaderThread worker("http://www.soccerstats.com/" + t.links.begin().value());
-//	worker.run();
+    int value = ui->progressBar->value();
+    ui->progressBar->setValue(value + 1);
 }
 
 void MainWindow::on_actionRefresh_triggered()
@@ -174,23 +212,43 @@ void MainWindow::AddChildren(QVector<QStringList>& vector, QTreeWidgetItem* root
     }
 }
 
-void MainWindow::on_actionTables_triggered()
+void MainWindow::AddRootItemForTeam(QString team)
 {
-    HtmlParser parser;
-    QString file("test.htm");
-    QString content = readFile(file);
-    DataManager manager;
-
-    manager.ParseHtml(content);
-    ui->treeWidget->setColumnCount(manager.GetMaxColumnNumber());
-
     QTreeWidgetItem* root = new QTreeWidgetItem();
-    root->setText(0, file);
+    root->setText(0, team);
 
-    foreach (auto var, manager.GetTables()) {
+    foreach (auto var, _manager->GetTables(team)) {
         QTreeWidgetItem* row = new QTreeWidgetItem(root);
         AddTableToTreeItem(row, var);
     }
 
     ui->treeWidget->addTopLevelItem(root);
+}
+
+void MainWindow::on_actionTables_triggered()
+{
+    HtmlParser parser;
+    QString file("test.htm");
+    QString content = readFile(file);
+
+    _manager->ParseHtml("test", content);
+    ui->treeWidget->setColumnCount(_manager->GetMaxColumnNumber());
+    AddRootItemForTeam("test");
+}
+
+void MainWindow::on_ApplyFilter_pressed()
+{
+    QList<QListWidgetItem*> items = ui->filtersListWidget->selectedItems();
+    while(!items.isEmpty())
+    {
+        QListWidgetItem* item = items.takeFirst();
+        bool ok = false;
+        int id = item->data(Qt::UserRole).toInt(&ok);
+        if (ok)
+        {
+            auto result = _filters->ApplyFilter(id);
+            VisualizeFilter visual(result.action->result);
+            ui->resultTabs->addTab(visual.GetDisplay(), item->text());
+        }
+    }
 }

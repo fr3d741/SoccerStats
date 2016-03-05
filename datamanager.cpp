@@ -8,12 +8,12 @@ DataManager::DataManager()
 {
 }
 
-void DataManager::ParseHtml(QString content)
+void DataManager::ParseHtml(QString team, QString content)
 {
     HtmlParser parser;
     QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
 
-    buildTables(tables);
+    buildTables(team, tables);
 }
 
 int DataManager::GetMaxColumnNumber()
@@ -21,19 +21,25 @@ int DataManager::GetMaxColumnNumber()
     return _maxColumnNumber;
 }
 
-QList<TableStruct *> &DataManager::GetTables()
+const DataManager::TeamTablesContainer &DataManager::GetTables()
 {
     return _tables;
 }
 
-void DataManager::buildTables(QList<QVector<QStringList> > &tables)
+QList<TableStruct *> &DataManager::GetTables(QString team)
 {
+    return _tables[team];
+}
+
+void DataManager::buildTables(QString team, QList<QVector<QStringList> > &tables)
+{
+    QList<TableStruct*>& list = _tables[team];
     while(!tables.isEmpty())
     {
         QVector<QStringList> rows = tables.takeFirst();
         TableStruct* tablePtr = new TableStruct;
         buildRows(tablePtr, rows);
-        _tables.push_back(tablePtr);
+        list.push_back(tablePtr);
     }
 }
 
