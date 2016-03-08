@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QDate>
 #include "datamanager.h"
 
 #include "htmlparser.h"
@@ -19,7 +20,13 @@ void DataManager::ParseHtml(QString team, QString content)
 
 int DataManager::GetMaxColumnNumber()
 {
-    return _maxColumnNumber;
+    int max = 0;
+    foreach (auto var, _tables) {
+        foreach (auto table, var) {
+            max = std::max(table->maxColumnNumber(), max);
+        }
+    }
+    return max;
 }
 
 QString DataManager::Serialize()
@@ -28,16 +35,21 @@ QString DataManager::Serialize()
     QXmlStreamWriter stream(&xml);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
-    stream.writeStartElement("Teams");
-    for(QMap<QString, QList<TableStruct*>>::iterator it = _tables.begin(); it != _tables.end(); ++it)
+    stream.writeStartElement("Sample");
+    stream.writeAttribute("date", QDate::currentDate().toString());
     {
-        auto list = it.value();
-        stream.writeStartElement("Team");
-        stream.writeAttribute("name", it.key());
-        stream.writeAttribute("tables", QString("%1").arg(it.value().size()));
-        foreach(auto table, list)
+        stream.writeStartElement("Teams");
+        for(QMap<QString, QList<TableStruct*>>::iterator it = _tables.begin(); it != _tables.end(); ++it)
         {
-            table->Serialize(stream);
+            auto list = it.value();
+            stream.writeStartElement("Team");
+            stream.writeAttribute("name", it.key());
+            stream.writeAttribute("tables", QString("%1").arg(it.value().size()));
+            foreach(auto table, list)
+            {
+                table->Serialize(stream);
+            }
+            stream.writeEndElement();
         }
         stream.writeEndElement();
     }
@@ -49,22 +61,39 @@ QString DataManager::Serialize()
 void DataManager::Deserialize(QString content)
 {
     QXmlStreamReader reader(content);
-    reader.readNext();
+    //reader.readNext();
     QXmlStreamReader::TokenType type = reader.readNext();
     if (type != QXmlStreamReader::StartDocument)
         return;
 
-//    while(!reader.atEnd())
-//    {
-//        type = reader.readNext();
-//        if (type == QXmlStreamReader::StartElement)
-//        {
-//            if (reader.name() == "Team")
-//            {
-//                reader.attributes()
-//            }
-//        }
-//    }
+    while(!reader.atEnd())
+    {
+        type = reader.readNext();
+        if (type == QXmlStreamReader::StartElement)
+        {
+            if (reader.name() == "Team")
+            {
+                auto attributes = reader.attributes();
+                if (!attributes.hasAttribute("name"))
+                    continue;
+                QString teamName = attributes.value("name").toString();
+                QList<TableStruct*>& tables = _tables[teamName];
+                bool ok = false;
+                int count = attributes.value("tables").toInt(&ok);
+                while(count)
+                {
+                    QXmlStreamReader::TokenType subType = reader.readNext();
+                    if (subType == QXmlStreamReader::StartElement)
+                    {
+                        TableStruct* table = new TableStruct;
+                        table->Deserialize(reader);
+                        tables.push_back(table);
+                        count--;
+                    }
+                }
+            }
+        }
+    }
 }
 
 const DataManager::TeamTablesContainer &DataManager::GetTables()

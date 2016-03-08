@@ -38,6 +38,7 @@ public:
     void AddRootItemForTeam(QString team);
     void LoadTeams();
     void LoadsFinished();
+    void FillTeams();
 private:
 	void GatherTeams();
     void AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > &table);

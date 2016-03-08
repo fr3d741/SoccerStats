@@ -121,7 +121,7 @@ void MainWindow::slotLoadFinished()
     }
 }
 
-void MainWindow::LoadsFinished()
+void MainWindow::FillTeams()
 {
     ui->treeWidget->setColumnCount(_manager->GetMaxColumnNumber());
     QList<QString> teams = _manager->GetTables().keys();
@@ -139,6 +139,11 @@ void MainWindow::LoadsFinished()
         value++;
     }
     ui->progressBar->setValue(0);
+}
+
+void MainWindow::LoadsFinished()
+{
+    FillTeams();
 }
 
 void MainWindow::LoadTeams()
@@ -271,4 +276,5 @@ void MainWindow::on_actionLoad_triggered()
     QString name = QFileDialog::getOpenFileName();
     QString content = readFile(name);
     _manager->Deserialize(content);
+    FillTeams();
 }
