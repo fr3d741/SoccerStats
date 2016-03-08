@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "datamanager.h"
 
 #include "htmlparser.h"
@@ -19,6 +20,51 @@ void DataManager::ParseHtml(QString team, QString content)
 int DataManager::GetMaxColumnNumber()
 {
     return _maxColumnNumber;
+}
+
+QString DataManager::Serialize()
+{
+    QString xml;
+    QXmlStreamWriter stream(&xml);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("Teams");
+    for(QMap<QString, QList<TableStruct*>>::iterator it = _tables.begin(); it != _tables.end(); ++it)
+    {
+        auto list = it.value();
+        stream.writeStartElement("Team");
+        stream.writeAttribute("name", it.key());
+        stream.writeAttribute("tables", QString("%1").arg(it.value().size()));
+        foreach(auto table, list)
+        {
+            table->Serialize(stream);
+        }
+        stream.writeEndElement();
+    }
+    stream.writeEndElement();
+    stream.writeEndDocument();
+    return xml;
+}
+
+void DataManager::Deserialize(QString content)
+{
+    QXmlStreamReader reader(content);
+    reader.readNext();
+    QXmlStreamReader::TokenType type = reader.readNext();
+    if (type != QXmlStreamReader::StartDocument)
+        return;
+
+//    while(!reader.atEnd())
+//    {
+//        type = reader.readNext();
+//        if (type == QXmlStreamReader::StartElement)
+//        {
+//            if (reader.name() == "Team")
+//            {
+//                reader.attributes()
+//            }
+//        }
+//    }
 }
 
 const DataManager::TeamTablesContainer &DataManager::GetTables()

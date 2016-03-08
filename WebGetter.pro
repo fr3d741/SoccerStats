@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += webkitwidgets network core gui xml
+QT       += webkitwidgets network core gui xml xmlpatterns
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

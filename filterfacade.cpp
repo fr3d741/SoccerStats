@@ -27,6 +27,28 @@ struct FirstCellCondition : Condition{
     }
 };
 
+struct FilterCellsAction : Action
+{
+    int row;
+    int column;
+    FilterCellsAction(int r, int c)
+        :row(r)
+        ,column(c)
+    {
+    }
+
+    void operator()(TableStruct* table, QString team)
+    {
+        auto rows = table->rows;
+        if (rows.isEmpty())
+            return;
+
+        auto value = rows[row].cells[column];
+        auto rowName = rows[row].cells[0];
+        result.values[team] = QPair<QString, QString>(rowName,value);
+    }
+};
+
 struct ScoringAction : Action{
 
     ScoringAction()
@@ -52,6 +74,7 @@ FilterFacade::FilterFacade(DataManager *manager)
     assert(manager != nullptr);
 
     _filters[0] = Filter{0, "TestFilter", new FirstCellCondition("SCORING"), new ScoringAction()};
+    _filters[1] = Filter{1, "Goals scored per game", new FirstCellCondition("Goals scored per game"), new FilterCellsAction(1,1)};
 }
 
 Filter& FilterFacade::ApplyFilter(int filterId)

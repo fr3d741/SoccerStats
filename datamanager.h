@@ -21,6 +21,10 @@ public:
 
     int GetMaxColumnNumber();
 
+    QString Serialize();
+
+    void Deserialize(QString content);
+
     const TeamTablesContainer& GetTables();
     QList<TableStruct*>& GetTables(QString team);
 private:

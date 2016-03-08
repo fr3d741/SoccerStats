@@ -92,6 +92,8 @@
      <string>File</string>
     </property>
     <addaction name="actionRefresh"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionLoad"/>
    </widget>
    <widget class="QMenu" name="menuTest">
     <property name="title">
@@ -99,6 +101,7 @@
     </property>
     <addaction name="actionFile"/>
     <addaction name="actionTables"/>
+    <addaction name="actionSerialization"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTest"/>
@@ -125,6 +128,21 @@
   <action name="actionTables">
    <property name="text">
     <string>Tables</string>
+   </property>
+  </action>
+  <action name="actionSerialization">
+   <property name="text">
+    <string>Serialization</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
    </property>
   </action>
  </widget>

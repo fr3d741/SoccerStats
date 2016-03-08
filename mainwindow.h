@@ -8,7 +8,6 @@ class DataManager;
 class FilterFacade;
 
 #include <QMainWindow>
-#include <QWebElement>
 #include <QRunnable>
 #include <QThreadPool>
 
@@ -41,11 +40,9 @@ public:
     void LoadsFinished();
 private:
 	void GatherTeams();
-    void ParseTeamStats();
     void AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > &table);
     void AddTableToTreeItem(QTreeWidgetItem* root, TableStruct* table);
     QString readFile(QString path) const;
-    int calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table);
 
 public slots:
     void slotLoadFinished();
@@ -57,6 +54,12 @@ private slots:
     void on_actionTables_triggered();
 
     void on_ApplyFilter_pressed();
+
+    void on_actionSerialization_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionLoad_triggered();
 
 private:
     void AddChildren(QVector<QStringList> &vector, QTreeWidgetItem *root);

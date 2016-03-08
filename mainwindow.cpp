@@ -1,7 +1,6 @@
 #include <QThreadPool>
+#include <QFileDialog>
 #include <QFile>
-#include <QDir>
-#include <QXmlStreamReader>
 #include <QTreeWidgetItem>
 #include "mainwindow.h"
 #include "htmlparser.h"
@@ -35,26 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
         item->setData(Qt::UserRole, QVariant::fromValue(filter.Id));
         ui->filtersListWidget->addItem(item);
     }
-
-//	QUrl url("http://www.soccerstats.com/leagues.asp");
-//	ui->setupUi(this);
-//	view = new QWebView(this);
-//	view->setVisible(false);
-//	connect(view, SIGNAL(loadFinished(bool)), SLOT(slotLoadFinished(bool)));
-//	view->load(url);
-
-//    QXmlStreamReader reader()
-//    while (!reader.atEnd()) {
-//        reader.readNext();
-//        if (reader.isStartElement()) {
-//            if (reader.name() == "title")
-//                title = reader.readElementText();
-//            else if(reader.name() == "a")
-//                links.append(reader.attributes().value("href").toString());
-//            else if(reader.name() == "p")
-//                ++paragraphCount;
-//        }
-//    }
 }
 
 MainWindow::~MainWindow()
@@ -91,33 +70,18 @@ void MainWindow::GatherTeams()
     }
 }
 
-void MainWindow::ParseTeamStats()
-{
-
-}
-
 QString MainWindow::readFile(QString path) const
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     if (!file.isOpen() || !file.isReadable())
+    {
+        qDebug() << "Invalid file";
         return QString("");
+    }
 
     QTextStream stream(&file);
     return stream.readAll();
-}
-
-int MainWindow::calculateMaxNumberOfColumns(QList<QVector<QStringList> > &table)
-{
-    int max = 0;
-    foreach(auto var, table)
-    {
-        foreach(auto var2, var)
-        {
-            max = std::max(var2.size(), max);
-        }
-    }
-    return max;
 }
 
 void MainWindow::slotLoadFinished()
@@ -126,7 +90,6 @@ void MainWindow::slotLoadFinished()
     int maxValue = ui->progressBar->maximum();
     ui->progressBar->setValue(value);
     ui->progressBar->update();
-    //QApplication::processEvents();
     LoaderThread* sndr = dynamic_cast<LoaderThread*>(sender());
     switch(sndr->category)
     {
@@ -170,11 +133,12 @@ void MainWindow::LoadsFinished()
     while(!teams.isEmpty())
     {
         ui->progressBar->setValue(value);
-        ui->progressBar->setFormat(QString("Filling tree...%1/2%").arg(value*100).arg(maxValue));
+        ui->progressBar->setFormat(QString("Filling tree...%1/%2").arg(value).arg(maxValue));
         QString team = teams.takeFirst();
         AddRootItemForTeam(team);
         value++;
     }
+    ui->progressBar->setValue(0);
 }
 
 void MainWindow::LoadTeams()
@@ -278,4 +242,33 @@ void MainWindow::on_ApplyFilter_pressed()
             ui->resultTabs->addTab(visual.GetDisplay(), item->text());
         }
     }
+}
+
+void MainWindow::on_actionSerialization_triggered()
+{
+    QString name = QFileDialog::getSaveFileName();
+    QFile file(name);
+    file.open(QIODevice::WriteOnly);
+    if (!file.isOpen())
+        return;
+    QString str = _manager->Serialize();
+    file.write(str.toStdString().c_str());
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    QString name = QFileDialog::getSaveFileName();
+    QFile file(name);
+    file.open(QIODevice::WriteOnly);
+    if (!file.isOpen())
+        return;
+    QString str = _manager->Serialize();
+    file.write(str.toStdString().c_str());
+}
+
+void MainWindow::on_actionLoad_triggered()
+{
+    QString name = QFileDialog::getOpenFileName();
+    QString content = readFile(name);
+    _manager->Deserialize(content);
 }
