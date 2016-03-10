@@ -2,11 +2,6 @@
 #include <iostream>
 #include "htmlparser.h"
 
-
-//QMap<QString, Team> teams = QMap<QString, Team>();
-
-
-
 HtmlParser::TeamsContainer &HtmlParser::getTeams()
 {
     return teams;
@@ -32,62 +27,6 @@ return std::pair<QString, QString>();
 HtmlParser::HtmlParser()
 {
 
-}
-
-QMap<QString, QString> HtmlParser::ExtractLinks(QWebElement node, QString key)
-{
-	QStringList qsl = node.attributeNames();
-//	foreach (var, qsl) {
-//		//if ()
-//	}
-return QMap<QString, QString>();
-}
-
-bool HtmlParser::parseTable(QWebElement node, QString tableKey)
-{
-	QWebElement e = node.firstChild();
-	if (e.localName() != "thead")
-		return false;
-
-	QWebElement em = e.findFirst("th");
-	if ( stripTags(em.toInnerXml()) != tableKey)
-		return false;
-
-	Table table;
-
-	QMap< int, QString > keymapping;
-	int idx = 0;
-	QWebElementCollection headElements = e.findAll("th");
-	foreach (QWebElement a, headElements) {
-		QWebElement b = a.findFirst("span");
-		keymapping[idx++] = stripTags(b.toInnerXml());
-	}
-
-	QWebElementCollection rows = node.findAll("tr");
-	foreach(QWebElement row, rows)
-	{
-		QWebElementCollection cols = row.findAll("td");
-		//QString innner = row.toInnerXml();
-		int idx = 0;
-		QString key;
-		foreach (QWebElement td, cols) {
-			if (idx == 0)
-			{
-				QWebElement a = td.firstChild();
-				table.links[a.toInnerXml()] = a.attribute("href", "");
-				key = a.toInnerXml();
-				idx++;
-			}
-			else
-			{
-				table.leagues[key][keymapping[idx++]] = td.toInnerXml();
-			}
-		}
-
-	}
-
-	_tables[tableKey] = table;
-    return true;
 }
 
 bool HtmlParser::parseTable(QString node, QString tableKey)
@@ -277,17 +216,6 @@ QString HtmlParser::RemoveTagContent(QString html, QString tag)
 {
     auto pair = getTagIndices(tag, 0, html);
     return html.remove(pair.first, pair.second - pair.first);
-}
-
-QMap<QString, Table> &HtmlParser::tables()
-{
-    return _tables;
-}
-
-void HtmlParser::parseTeamRow(Team &t, QString row)
-{
-    QStringList columns = row.split("<td");
-
 }
 
 std::pair<QString,int> HtmlParser::getTag(QString tag, int from, QString in)

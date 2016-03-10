@@ -1,9 +1,9 @@
 #ifndef LOADERTHREAD_H
 #define LOADERTHREAD_H
 
+#include <QObject>
 #include <QRunnable>
 #include <QString>
-#include <QWebView>
 
 class LoaderThread : public QObject, public QRunnable
 {

@@ -4,21 +4,6 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
-#include <QWebElement>
-
-struct Team{
-	QString name;
-	QString league;
-	QMap< QString, float> values;
-};
-
-struct Table
-{
-	QMap<QString, QMap<QString, QString> > leagues;
-	QMap<QString, QString> links;
-};
-
-//extern QMap<QString, Team> teams;
 
 class HtmlParser
 {
@@ -27,10 +12,6 @@ public:
     typedef QMap<QString, QMap<QString, QString> > TeamsContainer;
 
 	HtmlParser();
-
-	QMap<QString, QString> ExtractLinks(QWebElement node, QString key);
-
-	bool parseTable(QWebElement node, QString tableKey);
 
     bool parseTable(QString node, QString tableKey);
 
@@ -43,8 +24,6 @@ public:
     QList<QVector<QStringList> > ExtractInnerTables(QString html);
 
     bool parseXML(QString file);
-
-	QMap< QString, Table >& tables();
 
     TeamsContainer& getTeams();
 
@@ -61,7 +40,6 @@ public:
 private:
     QString getNextToken(QString html, int fromIndex);
     std::pair<QString, QString> recursiveTableExtract(QString html);
-    void parseTeamRow(Team& t, QString row);
 
     /*
      * \brief returns <content, endTagIndex> pair
@@ -74,7 +52,6 @@ private:
     static std::pair<int, int> getTagIndices(QString tag, int from, QString in);
 
 private:
-    QMap< QString, Table > _tables;
     QVector<QStringList> parseRows(QString content);
     QList<QString> parseColumns(QString content);
 };

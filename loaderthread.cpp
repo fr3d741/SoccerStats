@@ -1,8 +1,8 @@
-#include "loaderthread.h"
-#include <QWebFrame>
+#include <QDebug>
 #include <QProcess>
 #include <QDir>
 
+#include "loaderthread.h"
 #include "htmlparser.h"
 
 int LoaderThread::_id = 0;
@@ -16,14 +16,16 @@ LoaderThread::LoaderThread(QString url, Category type)
     ,_local_file(QString("%1.t_html").arg(++_id))
 {
     category = type;
-//	connect(_view, SIGNAL(loadFinished(bool)), SLOT(slotLoaded(bool)));
-//	connect(_view, SIGNAL(loadProgress(int)), SLOT(slotProgress(int)));
+#ifdef _DEBUG
 	qDebug() << "start";
+#endif
 }
 
 LoaderThread::~LoaderThread()
 {
+#ifdef _DEBUG
 	qDebug() << "Destrukt";
+#endif
 }
 
 QString LoaderThread::localFile()
@@ -41,21 +43,16 @@ void LoaderThread::run()
 	proc.setWorkingDirectory(dir);
 	proc.setProcessChannelMode(QProcess::MergedChannels);
     proc.start("perl.exe ", parameters);
-    bool result = proc.waitForFinished(-1);
-
+#ifdef _DEBUG
     qDebug() << proc.readAllStandardOutput();
-
-//    while(1)
-//    {
-//        QFile f(_local_file);
-//        if (f.exists())
-//            break;
-//    }
 
     qDebug() << dir;
 
     qDebug() << "Thread done";
+#endif
+    proc.waitForFinished();
     emit signalFinished();
+    //proc.close();
 }
 
 

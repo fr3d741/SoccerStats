@@ -2,6 +2,8 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTreeWidgetItem>
+#include <QDebug>
+
 #include "mainwindow.h"
 #include "htmlparser.h"
 #include "loaderthread.h"
@@ -196,16 +198,14 @@ void MainWindow::AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > 
 void MainWindow::AddTableToTreeItem(QTreeWidgetItem *root, TableStruct *table)
 {
     foreach (auto var, table->rows) {
-        QTreeWidgetItem* item = new QTreeWidgetItem(root, var.cells);
+        new QTreeWidgetItem(root, var.cells);
     }
 }
 
 void MainWindow::AddChildren(QVector<QStringList>& vector, QTreeWidgetItem* root)
 {
     for(QVector<QStringList>::iterator it = vector.begin(); it != vector.end(); ++it)
-    {
-        QTreeWidgetItem* item = new QTreeWidgetItem(root, HtmlParser::stripHtmlTags(*it));
-    }
+        new QTreeWidgetItem(root, HtmlParser::stripHtmlTags(*it));
 }
 
 void MainWindow::AddRootItemForTeam(QString team)
