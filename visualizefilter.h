@@ -3,15 +3,16 @@
 
 #include <QWidget>
 
+#include "IVisualizeFilter.h"
 #include "filterfacade.h"
 
-class VisualizeFilter
+class VisualizeFilter : public IVisualizeFilter
 {
-    Result& _result;
+	 Result& _result;
 public:
-    VisualizeFilter(Result& filter);
+	 VisualizeFilter(Result& filter);
 
-    QWidget *GetDisplay();
+	 QWidget *GetDisplay();
 };
 
 #endif // VISUALIZEFILTER_H

@@ -7,40 +7,60 @@ class DataManager;
 #include <QString>
 #include <QMap>
 #include <QList>
+#include <QVariant>
+
+#include "IVisualizeFilter.h"
 
 struct Condition{
-    virtual bool operator()(TableStruct *){return false;};
+	virtual bool operator()(TableStruct *){return false;};
 };
 
 struct Result
 {
-    typedef QMap<QString, QPair<QString, QString> > ResultContainer;
-    ResultContainer values;
+	typedef QMap<QString, QVariant > ResultContainer;
+	ResultContainer values;
 };
 
-struct Action{
-    Result result;
-    virtual void operator()(TableStruct *, QString){};
+class Action{
+public:
+	Result result;
+	virtual void operator()(TableStruct *, QString){};
 };
 
 
-struct Filter{
-    int Id;
-    QString Name;
-    Condition* preCondition;
-    Action* action;
+class Filter{
+	protected:
+		int _id;
+		QString _name;
+		IVisualizeFilter* _visualizer;
+	public:
+		Condition* preCondition;
+		Action* action;
+
+		Filter(
+			int id,
+			QString name,
+			Condition* preCondition,
+			Action* action,
+			IVisualizeFilter* visualizer);
+
+		QString Name();
+
+		int Id();
+
+		virtual QWidget* GetVisual();
 };
 
 class FilterFacade
 {
-    DataManager* _manager;
-    QMap<int, Filter> _filters;
-public:
-    FilterFacade(DataManager* manager);
+		DataManager* _manager;
+		QMap<int, Filter*> _filters;
+	public:
+		FilterFacade(DataManager* manager);
 
-    Filter& ApplyFilter(int filterId);
+		Filter& ApplyFilter(int filterId);
 
-    QList<Filter> GetFilters();
+		QList<Filter*> GetFilters();
 };
 
 #endif // FILTERFACADE_H

@@ -27,6 +27,7 @@ HEADERS  += mainwindow.h \
     tablestruct.h \
 	datamanager.h \
     filterfacade.h \
-    visualizefilter.h
+    visualizefilter.h \
+    IVisualizeFilter.h
 
 FORMS    += mainwindow.ui
