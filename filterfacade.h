@@ -9,10 +9,12 @@ class DataManager;
 #include <QList>
 #include <QVariant>
 
+#include <memory>
+
 #include "IVisualizeFilter.h"
 
 struct Condition{
-	virtual bool operator()(TableStruct *){return false;};
+	virtual bool operator()(std::shared_ptr<TableStruct>){return false;};
 };
 
 struct Result
@@ -24,7 +26,7 @@ struct Result
 class Action{
 public:
 	Result result;
-	virtual void operator()(TableStruct *, QString){};
+	virtual void operator()(std::shared_ptr<TableStruct>, QString){};
 };
 
 
@@ -54,13 +56,13 @@ class Filter{
 class FilterFacade
 {
 		DataManager* _manager;
-		QMap<int, Filter*> _filters;
+		QMap<int, std::shared_ptr<Filter>> _filters;
 	public:
 		FilterFacade(DataManager* manager);
 
 		Filter& ApplyFilter(int filterId);
 
-		QList<Filter*> GetFilters();
+		QList<std::shared_ptr<Filter>> GetFilters();
 };
 
 #endif // FILTERFACADE_H

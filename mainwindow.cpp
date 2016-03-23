@@ -199,7 +199,7 @@ void MainWindow::AddTeamToTreeWidget(QString name, QList<QVector<QStringList> > 
 	 ui->treeWidget->addTopLevelItem(root);
 }
 
-void MainWindow::AddTableToTreeItem(QTreeWidgetItem *root, TableStruct *table)
+void MainWindow::AddTableToTreeItem(QTreeWidgetItem *root, std::shared_ptr<TableStruct> table)
 {
 	 foreach (auto var, table->rows) {
 		  new QTreeWidgetItem(root, var.cells);

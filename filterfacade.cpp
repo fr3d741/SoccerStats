@@ -16,7 +16,7 @@ struct FirstCellCondition : Condition{
 		  cellValue = value;
 	 }
 
-	 bool operator()(TableStruct* table)
+	 bool operator()(std::shared_ptr<TableStruct> table)
 	 {
 		  if (table->rows.isEmpty())
 				return false;
@@ -41,7 +41,7 @@ public:
 	 {
 	 }
 
-	 void operator()(TableStruct* table, QString team)
+	 void operator()(std::shared_ptr<TableStruct> table, QString team)
 	 {
 		  auto rows = table->rows;
 		  if (rows.isEmpty())
@@ -59,7 +59,7 @@ public:
 	 {
 	 }
 
-	 void operator()(TableStruct* table, QString team)
+	 void operator()(std::shared_ptr<TableStruct> table, QString team)
 	 {
 		  auto rows = table->rows;
 		  if (rows.isEmpty())
@@ -83,7 +83,7 @@ public:
 	{
 	}
 
-	void operator()(TableStruct* table, QString team)
+	void operator()(std::shared_ptr<TableStruct> table, QString team)
 	{
 		auto rows = table->rows;
 		if (rows.isEmpty())
@@ -245,24 +245,24 @@ FilterFacade::FilterFacade(DataManager *manager)
 	 assert(manager != nullptr);
 
 	 auto scoringAction = new ScoringAction();
-	 _filters[0] = new Filter(0, "TestFilter", new FirstCellCondition("SCORING"), scoringAction, new VisualizeFilter(scoringAction->result));
+	 _filters[0] = std::shared_ptr<Filter>(new Filter(0, "TestFilter", new FirstCellCondition("SCORING"), scoringAction, new VisualizeFilter(scoringAction->result)));
 	 auto cellAction = new FilterCellsAction(1,1);
-	 _filters[1] = new Filter(1, "Goals scored per game", new FirstCellCondition("Goals scored per game"), cellAction, new VisualizeFilter(cellAction->result));
+	 _filters[1] = std::shared_ptr<Filter>(new Filter(1, "Goals scored per game", new FirstCellCondition("Goals scored per game"), cellAction, new VisualizeFilter(cellAction->result)));
 	 auto maction = new MatchesAction();
-	 _filters[2] = new Filter(2, "Matches", new FirstCellCondition("All results (chronological order)"), maction, new MatchVisualizer(maction->result));
+	 _filters[2] = std::shared_ptr<Filter>(new Filter(2, "Matches", new FirstCellCondition("All results (chronological order)"), maction, new MatchVisualizer(maction->result)));
 }
 
 Filter& FilterFacade::ApplyFilter(int filterId)
 {
 	 Filter& filter = *_filters[filterId];
-	 QMap<QString, QList<TableStruct *> > teamTables = _manager->GetTables();
-	 for(QMap<QString, QList<TableStruct *> >::iterator it = teamTables.begin(); it != teamTables.end(); ++it)
+	 DataManager::TeamTablesContainer teamTables = _manager->GetTables();
+	 for(DataManager::TeamTablesContainer::iterator it = teamTables.begin(); it != teamTables.end(); ++it)
 	 {
-		  QList<TableStruct *> tables = it.value();
-		  QList<TableStruct *> acceptedTables;
+		  QList<std::shared_ptr<TableStruct>> tables = it.value();
+		  QList<std::shared_ptr<TableStruct>> acceptedTables;
 		  while(!tables.isEmpty())
 		  {
-				TableStruct* table = tables.takeFirst();
+				std::shared_ptr<TableStruct> table = tables.takeFirst();
 				if ((*filter.preCondition)(table))
 				{
 					 acceptedTables.push_back(table);
@@ -271,7 +271,7 @@ Filter& FilterFacade::ApplyFilter(int filterId)
 
 		  while(!acceptedTables.isEmpty())
 		  {
-				TableStruct* table = acceptedTables.takeFirst();
+				std::shared_ptr<TableStruct> table = acceptedTables.takeFirst();
 				(*filter.action)(table, it.key());
 		  }
 	 }
@@ -279,7 +279,7 @@ Filter& FilterFacade::ApplyFilter(int filterId)
 	 return filter;
 }
 
-QList<Filter*> FilterFacade::GetFilters()
+QList<std::shared_ptr<Filter> > FilterFacade::GetFilters()
 {
 	 return _filters.values();
 }

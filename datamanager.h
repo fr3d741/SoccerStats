@@ -8,28 +8,30 @@ class TableStruct;
 #include <QVector>
 #include <QMap>
 
+#include <memory>
+
 class DataManager
 {
-    QMap<QString, QList<TableStruct*> > _tables;
-    int                 _maxColumnNumber;
+	 QMap<QString, QList<std::shared_ptr<TableStruct>>> _tables;
+	 int                 _maxColumnNumber;
 public:
-    typedef QMap<QString, QList<TableStruct*> > TeamTablesContainer;
+	 typedef QMap<QString, QList<std::shared_ptr<TableStruct>> > TeamTablesContainer;
 
-    DataManager();
+	 DataManager();
 
-    void ParseHtml(QString team, QString content);
+	 void ParseHtml(QString team, QString content);
 
-    int GetMaxColumnNumber();
+	 int GetMaxColumnNumber();
 
-    QString Serialize();
+	 QString Serialize();
 
-    void Deserialize(QString content);
+	 void Deserialize(QString content);
 
-    const TeamTablesContainer& GetTables();
-    QList<TableStruct*>& GetTables(QString team);
+	 const TeamTablesContainer& GetTables();
+	 QList<std::shared_ptr<TableStruct>>& GetTables(QString team);
 private:
-    void buildTables(QString team, QList<QVector<QStringList>>& tables);
-    void buildRows(TableStruct* table, QVector<QStringList>& rows);
+	 void buildTables(QString team, QList<QVector<QStringList>>& tables);
+	 void buildRows(std::shared_ptr<TableStruct> table, QVector<QStringList>& rows);
 };
 
 #endif // DATAMANAGER_H
