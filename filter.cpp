@@ -6,7 +6,7 @@
 
 int Filter::instanceCounter = 0;
 
-Filter::Filter(QString name, Condition* preCondition, Action* action, IVisualizeFilter* visualizer)
+Filter::Filter(QString name, Condition* preCondition, Action* action, std::shared_ptr<IVisualizeFilter> visualizer)
 	:_id(instanceCounter++)
 	,_name(name)
 	,_visualizer(visualizer)

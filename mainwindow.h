@@ -30,8 +30,8 @@ class MainWindow : public QMainWindow
 	 HtmlParser _parser;
 	 QWebView* view;
 
-	 DataManager* _manager;
-	 FilterFacade* _filters;
+	 std::shared_ptr<DataManager> _manager;
+	 std::shared_ptr<FilterFacade> _filters;
 
 public:
 	explicit MainWindow(QWidget *parent = 0);

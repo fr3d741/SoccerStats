@@ -27,15 +27,29 @@ MainWindow::MainWindow(QWidget *parent) :
 	 _pool(),
 	 _parser(),
 	 view(),
-	 _manager(new DataManager()),
-	 _filters(new FilterFacade(_manager))
+	 _manager(std::shared_ptr<DataManager>(new DataManager())),
+	 _filters(std::shared_ptr<FilterFacade>(new FilterFacade(_manager)))
 {
 	ui->setupUi(this);
 
 	auto scoringAction = new ScoringAction();
-	_filters->AddFilter(std::shared_ptr<Filter>(new Filter("TestFilter", new FirstCellCondition("SCORING"), scoringAction, new VisualizeFilter(scoringAction->result()))));
+	_filters->AddFilter(
+				std::shared_ptr<Filter>(
+					new Filter(
+						"TestFilter",
+						new FirstCellCondition("SCORING"),
+						scoringAction,
+						std::shared_ptr<IVisualizeFilter>(
+							new VisualizeFilter(scoringAction->result())))));
 	auto cellAction = new FilterCellsAction(1,1);
-	_filters->AddFilter(std::shared_ptr<Filter>(new Filter("Goals scored per game", new FirstCellCondition("Goals scored per game"), cellAction, new VisualizeFilter(cellAction->result()))));
+	_filters->AddFilter(
+				std::shared_ptr<Filter>(
+					new Filter(
+						"Goals scored per game",
+						new FirstCellCondition("Goals scored per game"),
+						cellAction,
+						std::shared_ptr<IVisualizeFilter>(
+							new VisualizeFilter(cellAction->result())))));
 	_filters->AddFilter(MatchFilter::CreateInstance());
 
 

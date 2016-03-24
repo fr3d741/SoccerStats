@@ -11,7 +11,7 @@
 #include "Action.h"
 #include "Result.h"
 
-FilterFacade::FilterFacade(DataManager *manager)
+FilterFacade::FilterFacade(std::shared_ptr<DataManager> manager)
 	 :_manager(manager)
 {
 	 assert(manager != nullptr);

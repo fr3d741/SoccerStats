@@ -164,7 +164,7 @@ QTableWidgetItem* MatchFilter::MatchVisualizer::CreateTableWidgetItem(QMap<QStri
 
 
 MatchFilter::MatchFilter(std::shared_ptr<Result> result)
-	:Filter("Matches", new FirstCellCondition("All results (chronological order)"), new MatchesAction(result), new MatchVisualizer(result))
+	:Filter("Matches", new FirstCellCondition("All results (chronological order)"), new MatchesAction(result), std::shared_ptr<IVisualizeFilter>(new MatchVisualizer(result)))
 	,_MatchResult(result)
 {
 }

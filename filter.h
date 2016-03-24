@@ -7,13 +7,14 @@ class Action;
 class QWidget;
 
 #include <QString>
+#include <memory>
 
 class Filter{
 		static int instanceCounter;
 		int _id;
 	protected:
 		QString _name;
-		IVisualizeFilter* _visualizer;
+		std::shared_ptr<IVisualizeFilter> _visualizer;
 	public:
 		Condition* preCondition;
 		Action* action;
@@ -22,7 +23,7 @@ class Filter{
 			QString name,
 			Condition* preCondition,
 			Action* action,
-			IVisualizeFilter* visualizer);
+			std::shared_ptr<IVisualizeFilter> visualizer);
 
 		QString Name();
 

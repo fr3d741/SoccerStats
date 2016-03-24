@@ -15,10 +15,10 @@ class DataManager;
 
 class FilterFacade
 {
-		DataManager* _manager;
+		std::shared_ptr<DataManager> _manager;
 		QMap<int, std::shared_ptr<Filter>> _filters;
 	public:
-		FilterFacade(DataManager* manager);
+		FilterFacade(std::shared_ptr<DataManager> manager);
 
 		Filter& ApplyFilter(int filterId);
 
