@@ -19,7 +19,12 @@ SOURCES += main.cpp\
     tablestruct.cpp \
 	datamanager.cpp \
     filterfacade.cpp \
-    visualizefilter.cpp
+    visualizefilter.cpp \
+    filter.cpp \
+    firstcellcondition.cpp \
+    filtercellsaction.cpp \
+    scoringaction.cpp \
+    Filters/matchfilter.cpp
 
 HEADERS  += mainwindow.h \
     loaderthread.h \
@@ -28,6 +33,14 @@ HEADERS  += mainwindow.h \
 	datamanager.h \
     filterfacade.h \
     visualizefilter.h \
-    IVisualizeFilter.h
+    IVisualizeFilter.h \
+    filter.h \
+    Condition.h \
+    Result.h \
+    Action.h \
+    firstcellcondition.h \
+    filtercellsaction.h \
+    scoringaction.h \
+    Filters/matchfilter.h
 
 FORMS    += mainwindow.ui

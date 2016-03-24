@@ -2,15 +2,16 @@
 #define VISUALIZEFILTER_H
 
 #include <QWidget>
+#include <memory>
 
 #include "IVisualizeFilter.h"
-#include "filterfacade.h"
+#include "Result.h"
 
 class VisualizeFilter : public IVisualizeFilter
 {
-	 Result& _result;
+	 std::shared_ptr<Result> _result;
 public:
-	 VisualizeFilter(Result& filter);
+	 VisualizeFilter(std::shared_ptr<Result> filter);
 
 	 QWidget *GetDisplay();
 };

@@ -11,6 +11,10 @@
 #include "datamanager.h"
 #include "tablestruct.h"
 #include "filterfacade.h"
+#include "scoringaction.h"
+#include "filtercellsaction.h"
+#include "firstcellcondition.h"
+#include "Filters/matchfilter.h"
 
 #include "ui_mainwindow.h"
 
@@ -28,14 +32,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	 auto filters = _filters->GetFilters();
-	 while(!filters.isEmpty())
-	 {
-		  auto filter = filters.takeFirst();
-		  QListWidgetItem* item = new QListWidgetItem(filter->Name());
-		  item->setData(Qt::UserRole, QVariant::fromValue(filter->Id()));
-		  ui->filtersListWidget->addItem(item);
-	 }
+	auto scoringAction = new ScoringAction();
+	_filters->AddFilter(std::shared_ptr<Filter>(new Filter("TestFilter", new FirstCellCondition("SCORING"), scoringAction, new VisualizeFilter(scoringAction->result()))));
+	auto cellAction = new FilterCellsAction(1,1);
+	_filters->AddFilter(std::shared_ptr<Filter>(new Filter("Goals scored per game", new FirstCellCondition("Goals scored per game"), cellAction, new VisualizeFilter(cellAction->result()))));
+	_filters->AddFilter(MatchFilter::CreateInstance());
+
+
+	auto filters = _filters->GetFilters();
+	while(!filters.isEmpty())
+	{
+		auto filter = filters.takeFirst();
+		QListWidgetItem* item = new QListWidgetItem(filter->Name());
+		item->setData(Qt::UserRole, QVariant::fromValue(filter->Id()));
+		ui->filtersListWidget->addItem(item);
+	}
 }
 
 MainWindow::~MainWindow()
