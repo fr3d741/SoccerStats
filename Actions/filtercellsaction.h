@@ -1,7 +1,7 @@
 #ifndef FILTERCELLSACTION_H
 #define FILTERCELLSACTION_H
 
-#include "Action.h"
+#include "../Interfaces/Action.h"
 
 class FilterCellsAction : public Action
 {

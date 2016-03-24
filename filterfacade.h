@@ -10,7 +10,7 @@ class DataManager;
 
 #include <memory>
 
-#include "IVisualizeFilter.h"
+#include "Interfaces/IVisualizeFilter.h"
 #include "Filter.h"
 
 class FilterFacade

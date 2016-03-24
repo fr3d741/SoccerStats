@@ -1,7 +1,7 @@
 #ifndef SCORINGACTION_H
 #define SCORINGACTION_H
 
-#include "Action.h"
+#include "../Interfaces/Action.h"
 
 class ScoringAction : public Action
 {

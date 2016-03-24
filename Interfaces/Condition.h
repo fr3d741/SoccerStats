@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "tablestruct.h"
+#include "../tablestruct.h"
 
 class Condition{
 public:

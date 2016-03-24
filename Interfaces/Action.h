@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Result.h"
-#include "tablestruct.h"
+#include "../tablestruct.h"
 
 class Action
 {

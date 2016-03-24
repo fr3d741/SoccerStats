@@ -4,8 +4,8 @@
 #include <QString>
 #include <memory>
 
-#include "Condition.h"
-#include "tablestruct.h"
+#include "../Interfaces/Condition.h"
+#include "../tablestruct.h"
 
 class FirstCellCondition : public Condition
 {

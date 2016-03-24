@@ -11,9 +11,9 @@
 #include "datamanager.h"
 #include "tablestruct.h"
 #include "filterfacade.h"
-#include "scoringaction.h"
-#include "filtercellsaction.h"
-#include "firstcellcondition.h"
+#include "Actions/scoringaction.h"
+#include "Actions/filtercellsaction.h"
+#include "Conditions/firstcellcondition.h"
 #include "Filters/matchfilter.h"
 
 #include "ui_mainwindow.h"

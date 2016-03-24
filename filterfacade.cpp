@@ -7,9 +7,9 @@
 #include "tablestruct.h"
 #include "datamanager.h"
 #include "visualizefilter.h"
-#include "Condition.h"
-#include "Action.h"
-#include "Result.h"
+#include "Interfaces/Condition.h"
+#include "Interfaces/Action.h"
+#include "Interfaces/Result.h"
 
 FilterFacade::FilterFacade(std::shared_ptr<DataManager> manager)
 	 :_manager(manager)

@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <memory>
 
-#include "IVisualizeFilter.h"
-#include "Result.h"
+#include "Interfaces/IVisualizeFilter.h"
+#include "Interfaces/Result.h"
 
 class VisualizeFilter : public IVisualizeFilter
 {

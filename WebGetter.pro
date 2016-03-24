@@ -13,34 +13,34 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    loaderthread.cpp \
-    htmlparser.cpp \
-    tablestruct.cpp \
+		mainwindow.cpp \
+	loaderthread.cpp \
+	htmlparser.cpp \
+	tablestruct.cpp \
 	datamanager.cpp \
-    filterfacade.cpp \
-    visualizefilter.cpp \
-    filter.cpp \
-    firstcellcondition.cpp \
-    filtercellsaction.cpp \
-    scoringaction.cpp \
-    Filters/matchfilter.cpp
+	filterfacade.cpp \
+	visualizefilter.cpp \
+	filter.cpp \
+	Filters/matchfilter.cpp \
+	Actions/filtercellsaction.cpp \
+	Actions/scoringaction.cpp \
+	Conditions/firstcellcondition.cpp
 
 HEADERS  += mainwindow.h \
-    loaderthread.h \
-    htmlparser.h \
-    tablestruct.h \
+	loaderthread.h \
+	htmlparser.h \
+	tablestruct.h \
 	datamanager.h \
-    filterfacade.h \
-    visualizefilter.h \
-    IVisualizeFilter.h \
-    filter.h \
-    Condition.h \
-    Result.h \
-    Action.h \
-    firstcellcondition.h \
-    filtercellsaction.h \
-    scoringaction.h \
-    Filters/matchfilter.h
+	filterfacade.h \
+	visualizefilter.h \
+	filter.h \
+	Filters/matchfilter.h \
+	Interfaces/Action.h \
+	Interfaces/Condition.h \
+	Interfaces/Result.h \
+	Actions/filtercellsaction.h \
+	Actions/scoringaction.h \
+	Conditions/firstcellcondition.h \
+	Interfaces/IVisualizeFilter.h
 
 FORMS    += mainwindow.ui

@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "IVisualizeFilter.h"
+#include "Interfaces/IVisualizeFilter.h"
 
 int Filter::instanceCounter = 0;
 

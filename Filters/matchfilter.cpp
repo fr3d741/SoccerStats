@@ -2,7 +2,7 @@
 
 #include "matchfilter.h"
 
-#include "../firstcellcondition.h"
+#include "../Conditions/firstcellcondition.h"
 
 const QString homeTag = "Goals@Home";
 const QString awayTag = "Goals@Away";

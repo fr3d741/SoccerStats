@@ -1,6 +1,6 @@
 #include "filtercellsaction.h"
 
-#include "Result.h"
+#include "../Interfaces/Result.h"
 
 FilterCellsAction::FilterCellsAction(int r, int c)
 	:Action(std::shared_ptr<Result>(new Result))

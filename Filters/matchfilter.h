@@ -3,9 +3,9 @@
 
 #include <QTableWidgetItem>
 
-#include "../Action.h"
+#include "../Interfaces/Action.h"
+#include "../Interfaces/IVisualizeFilter.h"
 #include "../Filter.h"
-#include "../IVisualizeFilter.h"
 
 class MatchFilter : public Filter
 {
