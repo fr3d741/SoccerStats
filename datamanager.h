@@ -10,10 +10,13 @@ class TableStruct;
 
 #include <memory>
 
+#include "Interfaces/Condition.h"
+
 class DataManager
 {
 	 QMap<QString, QList<std::shared_ptr<TableStruct>>> _tables;
 	 int                 _maxColumnNumber;
+	 QList<std::shared_ptr<Condition>>	_rulesForTables;
 public:
 	 typedef QMap<QString, QList<std::shared_ptr<TableStruct>> > TeamTablesContainer;
 
@@ -28,6 +31,8 @@ public:
 	 void Deserialize(QString content);
 
 	 const TeamTablesContainer& GetTables();
+
+	 void AddConditionForTables(std::shared_ptr<Condition> condition);
 
 	 QList<std::shared_ptr<TableStruct>>& GetTables(QString team);
 private:

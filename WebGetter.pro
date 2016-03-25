@@ -41,6 +41,7 @@ HEADERS  += mainwindow.h \
 	Actions/filtercellsaction.h \
 	Actions/scoringaction.h \
 	Conditions/firstcellcondition.h \
-    Interfaces/IVisualizer.h
+    Interfaces/IVisualizer.h \
+    Interfaces/Rule.h
 
 FORMS    += mainwindow.ui

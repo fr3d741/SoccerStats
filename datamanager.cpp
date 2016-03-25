@@ -12,10 +12,10 @@ DataManager::DataManager()
 
 void DataManager::ParseHtml(QString team, QString content)
 {
-	 HtmlParser parser;
-	 QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
-
-	 buildTables(team, tables);
+	HtmlParser parser;
+	QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
+	QVariant var = QVariant::fromValue(tables);
+	buildTables(team, tables);
 }
 
 int DataManager::GetMaxColumnNumber()
@@ -98,7 +98,12 @@ void DataManager::Deserialize(QString content)
 
 const DataManager::TeamTablesContainer &DataManager::GetTables()
 {
-	 return _tables;
+	return _tables;
+}
+
+void DataManager::AddConditionForTables(std::shared_ptr<Condition> condition)
+{
+	_rulesForTables.push_back(condition);
 }
 
 QList<std::shared_ptr<TableStruct> >& DataManager::GetTables(QString team)
@@ -108,14 +113,22 @@ QList<std::shared_ptr<TableStruct> >& DataManager::GetTables(QString team)
 
 void DataManager::buildTables(QString team, QList<QVector<QStringList> > &tables)
 {
-	 QList<std::shared_ptr<TableStruct>>& list = _tables[team];
-	 while(!tables.isEmpty())
-	 {
-		  QVector<QStringList> rows = tables.takeFirst();
-		  std::shared_ptr<TableStruct> tablePtr = std::shared_ptr<TableStruct>(new TableStruct);
-		  buildRows(tablePtr, rows);
-		  list.push_back(tablePtr);
-	 }
+	QList<std::shared_ptr<TableStruct>>& list = _tables[team];
+	while(!tables.isEmpty())
+	{
+		QVector<QStringList> rows = tables.takeFirst();
+		std::shared_ptr<TableStruct> tablePtr = std::shared_ptr<TableStruct>(new TableStruct);
+		buildRows(tablePtr, rows);
+
+		bool shouldAddTable = true;
+		for(QList<std::shared_ptr<Condition>>::iterator it = _rulesForTables.begin(); it != _rulesForTables.end() && shouldAddTable; ++it)
+		{
+			shouldAddTable = (**it)(tablePtr);
+		}
+
+		if (shouldAddTable)
+			list.push_back(tablePtr);
+	}
 }
 
 void DataManager::buildRows(std::shared_ptr<TableStruct> table, QVector<QStringList> &rows)
