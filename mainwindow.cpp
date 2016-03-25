@@ -14,6 +14,7 @@
 #include "Actions/scoringaction.h"
 #include "Actions/filtercellsaction.h"
 #include "Conditions/firstcellcondition.h"
+#include "Conditions/matchesonlycondition.h"
 #include "Filters/matchfilter.h"
 
 #include "ui_mainwindow.h"
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
 	_filters->AddFilter(MatchFilter::CreateInstance());
+	_manager->AddConditionForTables(MatchesOnlyCondition::CreateInstance());
 
 	auto filters = _filters->GetFilters();
 	while(!filters.isEmpty())

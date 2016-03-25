@@ -24,7 +24,8 @@ SOURCES += main.cpp\
 	Filters/matchfilter.cpp \
 	Actions/filtercellsaction.cpp \
 	Actions/scoringaction.cpp \
-	Conditions/firstcellcondition.cpp
+	Conditions/firstcellcondition.cpp \
+    Conditions/matchesonlycondition.cpp
 
 HEADERS  += mainwindow.h \
 	loaderthread.h \
@@ -42,6 +43,7 @@ HEADERS  += mainwindow.h \
 	Actions/scoringaction.h \
 	Conditions/firstcellcondition.h \
     Interfaces/IVisualizer.h \
-    Interfaces/Rule.h
+    Interfaces/Rule.h \
+    Conditions/matchesonlycondition.h
 
 FORMS    += mainwindow.ui

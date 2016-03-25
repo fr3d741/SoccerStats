@@ -14,7 +14,7 @@ void DataManager::ParseHtml(QString team, QString content)
 {
 	HtmlParser parser;
 	QList<QVector<QStringList>> tables = parser.ExtractInnerTables(content);
-	QVariant var = QVariant::fromValue(tables);
+
 	buildTables(team, tables);
 }
 
