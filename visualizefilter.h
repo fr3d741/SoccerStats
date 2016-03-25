@@ -4,10 +4,10 @@
 #include <QWidget>
 #include <memory>
 
-#include "Interfaces/IVisualizeFilter.h"
+#include "Interfaces/IVisualizer.h"
 #include "Interfaces/Result.h"
 
-class VisualizeFilter : public IVisualizeFilter
+class VisualizeFilter : public IVisualizer
 {
 	 std::shared_ptr<Result> _result;
 public:

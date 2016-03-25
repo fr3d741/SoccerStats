@@ -7,25 +7,25 @@
 #include <QString>
 
 struct Row{
-    QList<QString> cells;
+	QList<QString> cells;
 
-    int maxColumnNumber();
+	int maxColumnNumber();
 
-    void Serialize(QXmlStreamWriter &stream);
-    void Deserialize(QXmlStreamReader &stream);
+	void Serialize(QXmlStreamWriter &stream);
+	void Deserialize(QXmlStreamReader &stream);
 };
 
 class TableStruct
 {
 public:
-    TableStruct();
+	TableStruct();
 
-    QList<Row> rows;
+	QList<Row> rows;
 
-    int maxColumnNumber();
+	int maxColumnNumber();
 
-    void Serialize(QXmlStreamWriter &stream);
-    void Deserialize(QXmlStreamReader &stream);
+	void Serialize(QXmlStreamWriter &stream);
+	void Deserialize(QXmlStreamReader &stream);
 private:
 };
 

@@ -7,7 +7,7 @@
 
 class Condition{
 public:
-	virtual bool operator()(std::shared_ptr<TableStruct>){return false;}
+	virtual bool operator()(std::shared_ptr<TableStruct>) = 0;
 };
 
 #endif // CONDITION_H

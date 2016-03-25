@@ -1,8 +1,10 @@
 #include "firstcellcondition.h"
 
 FirstCellCondition::FirstCellCondition(QString value)
+	:Condition()
+	,_cellValue(value)
 {
-	 cellValue = value;
+
 }
 
 bool FirstCellCondition::operator()(std::shared_ptr<TableStruct> table)
@@ -15,5 +17,5 @@ bool FirstCellCondition::operator()(std::shared_ptr<TableStruct> table)
 	 if (cells.isEmpty())
 		  return false;
 
-	 return cells.first().contains(cellValue, Qt::CaseInsensitive);
+	 return cells.first().contains(_cellValue, Qt::CaseInsensitive);
 }

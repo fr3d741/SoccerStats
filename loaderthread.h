@@ -9,22 +9,22 @@ class LoaderThread : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
-    enum Category{
-        StartPage,
-        Leagues,
-        Teams
-    };
+	enum Category{
+		StartPage,
+		Leagues,
+		Teams
+	};
 
-    Category category;
+	Category category;
 
-    LoaderThread(QString url, Category type);
+	LoaderThread(QString url, Category type);
 	virtual ~LoaderThread();
 
 	QString localFile();
 
-    virtual void run();
+	virtual void run();
 signals:
-    void signalFinished();
+	 void signalFinished();
 
 public slots:
 

@@ -1,17 +1,19 @@
-#include "filter.h"
-
 #include <assert.h>
 
-#include "Interfaces/IVisualizeFilter.h"
+#include "filter.h"
+
+#include "Interfaces/Action.h"
+#include "Interfaces/Condition.h"
+#include "Interfaces/IVisualizer.h"
 
 int Filter::instanceCounter = 0;
 
-Filter::Filter(QString name, Condition* preCondition, Action* action, std::shared_ptr<IVisualizeFilter> visualizer)
+Filter::Filter(QString name, Condition* preCondition, Action* action, std::shared_ptr<IVisualizer> visualizer)
 	:_id(instanceCounter++)
 	,_name(name)
 	,_visualizer(visualizer)
-	,preCondition(preCondition)
-	,action(action)
+	,_preCondition(preCondition)
+	,_action(action)
 {
 	assert(preCondition != nullptr);
 	assert(action != nullptr);
@@ -31,4 +33,14 @@ int Filter::Id()
 QWidget* Filter::GetVisual()
 {
 	return _visualizer->GetDisplay();
+}
+
+bool Filter::PreCondition(std::shared_ptr<TableStruct> table)
+{
+	return (*_preCondition)(table);
+}
+
+void Filter::ExecuteActionOn(std::shared_ptr<TableStruct> table, QString team)
+{
+	(*_action)(table, team);
 }

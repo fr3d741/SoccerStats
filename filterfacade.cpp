@@ -28,7 +28,7 @@ Filter& FilterFacade::ApplyFilter(int filterId)
 		  while(!tables.isEmpty())
 		  {
 				std::shared_ptr<TableStruct> table = tables.takeFirst();
-				if ((*filter.preCondition)(table))
+				if (filter.PreCondition(table))
 				{
 					 acceptedTables.push_back(table);
 				}
@@ -37,7 +37,7 @@ Filter& FilterFacade::ApplyFilter(int filterId)
 		  while(!acceptedTables.isEmpty())
 		  {
 				std::shared_ptr<TableStruct> table = acceptedTables.takeFirst();
-				(*filter.action)(table, it.key());
+				filter.ExecuteActionOn(table, it.key());
 		  }
 	 }
 

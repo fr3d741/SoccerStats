@@ -4,8 +4,8 @@
 
 FilterCellsAction::FilterCellsAction(int r, int c)
 	:Action(std::shared_ptr<Result>(new Result))
-	,row(r)
-	,column(c)
+	,_row(r)
+	,_column(c)
 {
 }
 
@@ -15,8 +15,8 @@ void FilterCellsAction::operator()(std::shared_ptr<TableStruct> table, QString t
 	if (rows.isEmpty())
 		return;
 
-	auto value = rows[row].cells[column];
-	auto rowName = rows[row].cells[0];
+	auto value = rows[_row].cells[_column];
+	auto rowName = rows[_row].cells[0];
 	_result->values[team] = QVariant::fromValue(QPair<QString, QString>(rowName,value));
 }
 

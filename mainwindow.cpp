@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+#ifdef _DEBUG
 	auto scoringAction = new ScoringAction();
 	_filters->AddFilter(
 				std::shared_ptr<Filter>(
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 						"TestFilter",
 						new FirstCellCondition("SCORING"),
 						scoringAction,
-						std::shared_ptr<IVisualizeFilter>(
+						std::shared_ptr<IVisualizer>(
 							new VisualizeFilter(scoringAction->result())))));
 	auto cellAction = new FilterCellsAction(1,1);
 	_filters->AddFilter(
@@ -48,10 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
 						"Goals scored per game",
 						new FirstCellCondition("Goals scored per game"),
 						cellAction,
-						std::shared_ptr<IVisualizeFilter>(
+						std::shared_ptr<IVisualizer>(
 							new VisualizeFilter(cellAction->result())))));
-	_filters->AddFilter(MatchFilter::CreateInstance());
+#endif
 
+	_filters->AddFilter(MatchFilter::CreateInstance());
 
 	auto filters = _filters->GetFilters();
 	while(!filters.isEmpty())

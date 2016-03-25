@@ -9,12 +9,11 @@
 
 class FirstCellCondition : public Condition
 {
+    QString _cellValue;
 public:
-	 QString cellValue;
+    FirstCellCondition(QString value);
 
-	 FirstCellCondition(QString value);
-
-	 bool operator()(std::shared_ptr<TableStruct> table);
+    bool operator()(std::shared_ptr<TableStruct> table);
 };
 
 

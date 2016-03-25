@@ -4,7 +4,7 @@
 #include <QTableWidgetItem>
 
 #include "../Interfaces/Action.h"
-#include "../Interfaces/IVisualizeFilter.h"
+#include "../Interfaces/IVisualizer.h"
 #include "../Filter.h"
 
 class MatchFilter : public Filter
@@ -37,7 +37,7 @@ private:
 				virtual bool operator<(const QTableWidgetItem& item) const;
 		};
 
-		class MatchVisualizer : public IVisualizeFilter
+		class MatchVisualizer : public IVisualizer
 		{
 				std::shared_ptr<Result> _result;
 			public:

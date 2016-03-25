@@ -28,6 +28,7 @@ public:
 	 void Deserialize(QString content);
 
 	 const TeamTablesContainer& GetTables();
+
 	 QList<std::shared_ptr<TableStruct>>& GetTables(QString team);
 private:
 	 void buildTables(QString team, QList<QVector<QStringList>>& tables);

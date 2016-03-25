@@ -5,9 +5,9 @@
 
 class FilterCellsAction : public Action
 {
+		int _row;
+		int _column;
 public:
-	 int row;
-	 int column;
 
 	 FilterCellsAction(int r, int c);
 

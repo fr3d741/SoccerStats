@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class IVisualizeFilter
+class IVisualizer
 {
 public:
 
